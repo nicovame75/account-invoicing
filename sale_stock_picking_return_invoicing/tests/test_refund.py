@@ -98,8 +98,8 @@ class SaleStockRefundPickingCase(SavepointCase):
             len(inv_1_id))
         inv_1 = self.env['account.invoice'].browse(inv_1_id)
         self.assertEqual(
-            so.amount_untaxed,
-            inv_1.amount_untaxed,
+            so.amount_untaxed_signed,
+            inv_1.amount_untaxed_signed,
             'Sale Stock: amount in SO and invoice should be the same')
         inv_1.signal_workflow('invoice_open')
 
@@ -124,8 +124,8 @@ class SaleStockRefundPickingCase(SavepointCase):
         inv_2_id = so.action_invoice_create(final=True)
         self.assertEqual(
             so.invoice_status,
-            'invoiced',
-            ('Sale Stock: so invoice_status should be "invoiced" instead of '
+            'no',
+            ('Sale Stock: so invoice_status should be "no" instead of '
              '"%s" after invoicing the return') % so.invoice_status)
         self.assertEqual(
             len(inv_2_id),
@@ -134,8 +134,6 @@ class SaleStockRefundPickingCase(SavepointCase):
             len(inv_2_id))
         inv_2 = self.env['account.invoice'].browse(inv_2_id)
         self.assertEqual(
-            inv_2.amount_untaxed,
-            inv_1.amount_untaxed / 5 * -2,
-            'Sale Stock: amount in SO and invoice should -2/5 of %f' %
-            inv_1.amount_untaxed)
+            inv_2.amount_untaxed_signed,
+            inv_1.amount_untaxed_signed / 5 * -2)
         inv_1.signal_workflow('invoice_open')

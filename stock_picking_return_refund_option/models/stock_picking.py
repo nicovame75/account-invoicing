@@ -40,6 +40,11 @@ class StockPicking(models.Model):
 
     @api.multi
     def set_delivered_qty(self):
+        """
+        Check if exists sale_line_id field in stock.move model that has been
+        added by sale_stock module, this module has not dependency of this,
+        Update sale order line qty_delivered for allow do a refund invoice
+        """
         if hasattr(self.env['stock.move'], 'sale_line_id') and self.sale_id:
             # The sale_stock module is installed
             so_lines = self.mapped('move_lines.sale_line_id').filtered(
@@ -49,6 +54,11 @@ class StockPicking(models.Model):
 
     @api.multi
     def set_received_qty(self):
+        """
+        Check if exists purchase_line_id field in stock.move model that has
+        been added by purchase module, this module has not dependency of this,
+        Update purchase order line qty_received for allow do a refund invoice.
+        """
         if (hasattr(self.env['stock.move'], 'purchase_line_id') and
                 self.purchase_id):
             # The purchase module is installed
